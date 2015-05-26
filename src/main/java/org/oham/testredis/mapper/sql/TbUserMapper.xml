@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="org.oham.testredis.mapper.TbUserMapper" >
+
+	<resultMap id="baseResultMap" type="TbUserAlias" >
+    	<id column="id" property="id" jdbcType="BIGINT" />
+    	<result column="name" property="name" jdbcType="VARCHAR" />
+    	<result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	id, name, add_date
+	</sql>
+  
+  	<select id="selectByParams" resultMap="baseResultMap">
+  		select 
+    	<include refid="Base_Column_List" />
+    	from tb_user
+    	<where>
+    		<if test="id != null">
+    			id = #{id,jdbcType=BIGINT}
+    		</if>
+    		<if test="name != null">
+    			and name = #{name,jdbcType=VARCHAR}
+    		</if>
+    		<if test="nameLike != null">
+    			and name like concat(concat('%',#{nameLike,jdbcType=VARCHAR}),'%')
+    		</if>
+    		<if test="addDate != null">
+    			and add_date = #{addDate,jdbcType=TIMESTAMP}
+    		</if>
+    		<if test="addDateSt != null and addDateEd == null">
+    			and add_date <![CDATA[>=]]> #{addDateSt,jdbcType=TIMESTAMP}
+    		</if>
+    		<if test="addDateSt == null and addDateEd != null">
+    			and add_date <![CDATA[<=]]> #{addDateEd,jdbcType=TIMESTAMP}
+    		</if>
+    		<if test="addDateSt != null and addDateEd != null">
+    			and add_date between #{addDateSt,jdbcType=TIMESTAMP} and #{addDateEd,jdbcType=TIMESTAMP} 
+    		</if>
+    	</where>
+    	
+    	<if test="orderBy != null">
+    		order by ${orderBy}
+    	</if>
+    	<if test="start != null and size != null">
+ 			limit #{start},#{size}
+ 		</if>
+  	</select>
+  
+	<select id="get" resultMap="baseResultMap" parameterType="java.lang.Long" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from tb_user
+    	where id = #{id,jdbcType=INTEGER}
+	</select>
+  
+ 	<select id="getTotalNum" resultType="java.lang.Integer" >
+ 		 select count(*) from tb_user
+ 		<where>
+    		<if test="id != null">
+    			id = #{id,jdbcType=BIGINT}
+    		</if>
+    		<if test="name != null">
+    			and name = #{name,jdbcType=VARCHAR}
+    		</if>
+    		<if test="nameLike != null">
+    			and name like concat(concat('%',#{nameLike,jdbcType=VARCHAR}),'%')
+    		</if>
+    		<if test="addDate != null">
+    			and add_date = #{addDate,jdbcType=TIMESTAMP}
+    		</if>
+    		<if test="addDateSt != null and addDateEd == null">
+    			and add_date <![CDATA[>=]]> #{addDateSt,jdbcType=TIMESTAMP}
+    		</if>
+    		<if test="addDateSt == null and addDateEd != null">
+    			and add_date <![CDATA[<=]]> #{addDateEd,jdbcType=TIMESTAMP}
+    		</if>
+    		<if test="addDateSt != null and addDateEd != null">
+    			and add_date between #{addDateSt,jdbcType=TIMESTAMP} and #{addDateEd,jdbcType=TIMESTAMP} 
+    		</if>
+    	</where>
+ 	</select>
+	
+	<insert id="add" parameterType="TbUserAlias" useGeneratedKeys="true" keyProperty="id" >
+		insert into tb_user (name, add_date) 
+		values
+		(#{name, jdbcType=VARCHAR}, #{addDate, jdbcType=TIMESTAMP})
+		<selectKey resultType="long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+	
+	<delete id="delete">
+		delete from tb_user where id = (#{id,jdbcType=BIGINT})
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from tb_user where id in (${ids})
+	</delete>
+	
+	<update id="update" parameterType="TbUserAlias">
+		update tb_user
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="addDate != null">
+				add_date = #{addDate, jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+</mapper>

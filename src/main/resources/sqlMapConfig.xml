@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "mybatis-3-config.dtd">
+
+<configuration>
+	<!-- - - - - - - 懒加载和缓存 - - - - - - - - - - -->
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+
+
+	<typeAliases>
+        <typeAlias type="org.oham.testredis.pojo.TbUser" alias="TbUserAlias"/>
+    </typeAliases> 
+	<!-- - - - - - - -映射文件路径- - - - - - -->
+	<mappers>
+		<mapper resource="org/oham/testredis/mapper/sql/TbUserMapper.xml" />
+	</mappers>
+</configuration>
