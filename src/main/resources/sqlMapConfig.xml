@@ -12,9 +12,11 @@
 
 	<typeAliases>
         <typeAlias type="org.oham.testredis.pojo.TbUser" alias="TbUserAlias"/>
+        <typeAlias type="org.oham.testredis.pojo.TbTeam" alias="TbTeamAlias"/>
     </typeAliases> 
 	<!-- - - - - - - -映射文件路径- - - - - - -->
 	<mappers>
 		<mapper resource="org/oham/testredis/mapper/sql/TbUserMapper.xml" />
+		<mapper resource="org/oham/testredis/mapper/sql/TbTeamMapper.xml" />
 	</mappers>
 </configuration>

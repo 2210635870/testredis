@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="org.oham.testredis.mapper.TbTeamMapper" >
+
+	<resultMap id="baseResultMap" type="TbTeamAlias" >
+    	<id column="id" property="id" jdbcType="BIGINT" />
+    	<result column="name" property="name" jdbcType="VARCHAR" />
+    	<result column="user_id" property="userId" jdbcType="BIGINT" />
+	</resultMap>
+	
+	<resultMap id="teamMemberInfo" type="org.oham.testredis.resultMap.UserTeamInfo" >
+    	<id column="id" property="id" jdbcType="BIGINT" />
+    	<result column="name" property="name" jdbcType="VARCHAR" />
+    	<result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+    	<result column="teamId" property="teamId" jdbcType="BIGINT" />
+    	<result column="teamNm" property="teamNm" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	id, name, user_id
+	</sql>
+  
+  	<select id="selectByParams" resultMap="baseResultMap">
+  		select 
+    	<include refid="Base_Column_List" />
+    	from tb_team
+    	<where>
+    		<if test="id != null">
+    			id = #{id,jdbcType=BIGINT}
+    		</if>
+    		<if test="name != null">
+    			and name = #{name,jdbcType=VARCHAR}
+    		</if>
+    		<if test="nameLike != null">
+    			and name like concat(concat('%',#{nameLike,jdbcType=VARCHAR}),'%')
+    		</if>
+    		<if test="userId != null">
+    			and user_id = #{userId,jdbcType=BIGINT}
+    		</if>
+    	</where>
+    	<if test="orderBy != null">
+    		order by ${orderBy}
+    	</if>
+    	<if test="start != null and size != null">
+ 			limit #{start},#{size}
+ 		</if>
+  	</select>
+  
+	<select id="get" resultMap="baseResultMap" parameterType="java.lang.Long" >
+    	select 
+    	<include refid="Base_Column_List" />
+    	from tb_team
+    	where id = #{id,jdbcType=INTEGER}
+	</select>
+  
+ 	<select id="getTotalNum" resultType="java.lang.Integer" >
+ 		 select count(*) from tb_team
+ 		<where>
+    		<if test="id != null">
+    			id = #{id,jdbcType=BIGINT}
+    		</if>
+    		<if test="name != null">
+    			and name = #{name,jdbcType=VARCHAR}
+    		</if>
+    		<if test="userId != null">
+    			and user_id = #{userId,jdbcType=BIGINT}
+    		</if>
+    		<if test="nameLike != null">
+    			and name like concat(concat('%',#{nameLike,jdbcType=VARCHAR}),'%')
+    		</if>
+    	</where>
+ 	</select>
+ 	
+ 	<select id="selectTeamMember" resultMap="teamMemberInfo">
+ 		select 
+ 			u.id, u.name, u.add_date,
+ 			t.id as teamId, 
+ 			t.name as teamNm
+ 		from tb_team t 
+ 		left join tb_user u on u.team_id = t.id
+ 		<where>
+ 			<if test="id != null">
+    			t.id = #{id,jdbcType=BIGINT}
+    		</if>
+    		<if test="name != null">
+    			and t.name = #{name,jdbcType=VARCHAR}
+    		</if>
+    		<if test="nameLike != null">
+    			and t.name like concat(concat('%',#{nameLike,jdbcType=VARCHAR}),'%')
+    		</if>
+ 		</where>
+ 	</select>
+	
+	<insert id="add" parameterType="TbTeamAlias" useGeneratedKeys="true" keyProperty="id" >
+		insert into tb_team (name, user_id) 
+		values
+		(#{name, jdbcType=VARCHAR}, #{userId, jdbcType=BIGINT})
+		<selectKey resultType="long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+	</insert>
+	
+	<delete id="delete">
+		delete from tb_team where id = (#{id,jdbcType=BIGINT})
+	</delete>
+	
+	<delete id="deleteByIds">
+		delete from tb_team where id in (${ids})
+	</delete>
+	
+	<update id="update" parameterType="TbUserAlias">
+		update tb_team
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId, jdbcType=BIGINT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

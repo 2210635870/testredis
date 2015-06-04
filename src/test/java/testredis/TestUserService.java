@@ -3,13 +3,14 @@ package testredis;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
+import org.oham.testredis.pojo.TbTeam;
 import org.oham.testredis.pojo.TbUser;
+import org.oham.testredis.resultMap.UserTeamInfo;
 import org.oham.testredis.services.CacheService;
+import org.oham.testredis.services.TeamService;
 import org.oham.testredis.services.UserService;
 import org.oham.testredis.util.RedisCacheSearchBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +28,16 @@ public class TestUserService extends AbstractJUnit4SpringContextTests {
 	
 	@Test
 	public void testAdd() {
-		
-		TbUser user = new TbUser(0L, "gouzi", new Date());
+		TbUser user = new TbUser(0L, "xxx", new Date(), null);
 		userService.save(user);
 	}
 	
 	@Test
 	public void testUpdate() {
-		TbUser user = new TbUser(53L, "oham", new Date());
+		TbUser user = new TbUser(56L, "oham", new Date(), 1L);
 		
 		userService.update(user);
 	}
-	
 	
 	@Test
 	public void testGet() {
@@ -57,32 +56,39 @@ public class TestUserService extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testDeleteByIds() {
 		List<Long> ids = new ArrayList<Long>();
-		ids.add(53L);
-		ids.add(54L);
+		ids.add(63L);
+		ids.add(64L);
 		userService.deleteByIds(ids);
 	}
 	
 	@Test
 	public void testSelectByParams() {
-		RedisCacheSearchBuilder builder = new RedisCacheSearchBuilder(CacheService.CACHE_PREFIX+"srch_userList", 0L);
-		Calendar calendar = Calendar.getInstance();
+		RedisCacheSearchBuilder builder = new RedisCacheSearchBuilder("srch_userList", 0L);
+		/*Calendar calendar = Calendar.getInstance();
 		calendar.set(2015, 4, 26, 00, 00, 0);
 		builder.put("addDateSt", calendar.getTime());
-		builder.put("orderBy", "name asc, add_date desc");
+		builder.put("orderBy", "name asc, add_date desc");*/
 		
 		
 		List<TbUser> list =  userService.selectByParams(builder);
 		for(TbUser user : list) {
 			System.out.println(user);
 		}
-		
 	}
-	
+
+	@Test
+	public void testSelectUserTeamInfo() {
+		RedisCacheSearchBuilder builder = new RedisCacheSearchBuilder("srch_userteam_info", 0L);
+		
+		builder.setPageFromCache(1L, 2L);
+		List<UserTeamInfo> list =  userService.selectUserTeamInfo(builder);
+		for(UserTeamInfo item : list) {
+			System.out.println(item);
+		}
+	}
 	
 	@Test
 	public void forTest() {
 		userService.forTest();
 	}
-	
-	
 }

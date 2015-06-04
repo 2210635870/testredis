@@ -12,13 +12,16 @@ public class TbUser implements Serializable{
 	private String name;
 	
 	private Date addDate;
+	
+	private Long teamId;
 
 	public TbUser() {}
 	
-	public TbUser(Long id, String name, Date addDate) {
+	public TbUser(Long id, String name, Date addDate, Long teamId) {
 		this.id = id;
 		this.name = name;
 		this.addDate = addDate;
+		this.teamId = teamId;
 	}
 
 	public Long getId() {
@@ -44,7 +47,15 @@ public class TbUser implements Serializable{
 	public void setAddDate(Date addDate) {
 		this.addDate = addDate;
 	}
-	
+
+	public Long getTeamId() {
+		return teamId;
+	}
+
+	public void setTeamId(Long teamId) {
+		this.teamId = teamId;
+	}
+
 	@Override
 	public String toString() {
 		return "id: " + this.id + ", name: " + this.name + ", addDate: " + this.addDate;

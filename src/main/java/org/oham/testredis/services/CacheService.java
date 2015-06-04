@@ -3,12 +3,15 @@ package org.oham.testredis.services;
 import java.util.List;
 
 import org.oham.testredis.mapper.CommonMapper;
+import org.oham.testredis.util.PropertiesUtil;
 import org.oham.testredis.util.RedisCacheSearchBuilder;
 import org.springframework.data.redis.connection.RedisConnection;
 
 public interface CacheService<T, D extends CommonMapper<T>> {
 	
-	public static final String CACHE_PREFIX = "testredis:";
+	// 指定一个前缀，避免与其他项目搞混
+	public static final String CACHE_PREFIX = PropertiesUtil.getValue("cache.properties", "redis.cache.prefix");
+	
 	public static final String CACHE_LIST = "list";
 	
 	public void save(final T bean);
